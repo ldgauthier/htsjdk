@@ -1580,6 +1580,7 @@ public class VariantContextUnitTest extends VariantBaseTest {
                 .attribute("Empty", new int[0])
                 .attribute("DefaultIntegerList", new int[5])
                 .attribute("ListWithMissing", new Object[]{1, null, null})
+                .attribute("ListDataIsMissing", new Object[]{"."})
                 .attribute("IntegerList", new int[]{0, 1, 2, 3})
                 .attribute("DoubleList", new double[]{1.8, 1.6, 2.1})
                 .attribute("StringList", new String[]{"1", "2"})
@@ -1591,6 +1592,8 @@ public class VariantContextUnitTest extends VariantBaseTest {
         // test as integer
         Assert.assertEquals(context.getAttributeAsIntList("DefaultIntegerList", 5), Arrays.asList(0, 0, 0, 0, 0));
         Assert.assertEquals(context.getAttributeAsIntList("ListWithMissing", 5), Arrays.asList(1, 5, 5));
+        final List<Integer> missingList = context.getAttributeAsIntList("ListDataIsMissing", -999);
+        Assert.assertTrue(missingList.size() == 1 &&  missingList.get(0) == -999);    //using a literal to make sure the references are different
         Assert.assertEquals(context.getAttributeAsIntList("IntegerList", 5), Arrays.asList(0, 1, 2, 3));
         Assert.assertEquals(context.getAttributeAsIntList("DoubleList", 5), Arrays.asList(1, 1, 2));
         Assert.assertEquals(context.getAttributeAsIntList("StringList", 5), Arrays.asList(1, 2));
@@ -1606,6 +1609,7 @@ public class VariantContextUnitTest extends VariantBaseTest {
                 .attribute("Empty", new int[0])
                 .attribute("DefaultIntegerList", new int[5])
                 .attribute("ListWithMissing", new Object[]{1, null, null})
+                .attribute("ListIsMissing", new Object[]{"."})
                 .attribute("IntegerList", new int[]{0, 1, 2, 3})
                 .attribute("DoubleList", new double[]{1.8, 1.6, 2.1})
                 .attribute("StringList", new String[]{"1", "2"})
@@ -1617,6 +1621,8 @@ public class VariantContextUnitTest extends VariantBaseTest {
         // test as double
         Assert.assertEquals(context.getAttributeAsDoubleList("DefaultIntegerList", 5), Arrays.asList(0d, 0d, 0d, 0d, 0d));
         Assert.assertEquals(context.getAttributeAsDoubleList("ListWithMissing", 5), Arrays.asList(1d, 5d, 5d));
+        final List<Double> missingList = context.getAttributeAsDoubleList("ListIsMissing", -999d);
+        Assert.assertTrue(missingList.size() == 1 &&  missingList.get(0) == -999d);    //using a literal to make sure the references are different
         Assert.assertEquals(context.getAttributeAsDoubleList("IntegerList", 5), Arrays.asList(0d, 1d, 2d, 3d));
         Assert.assertEquals(context.getAttributeAsDoubleList("DoubleList", 5), Arrays.asList(1.8, 1.6, 2.1));
         Assert.assertEquals(context.getAttributeAsDoubleList("StringList", 5), Arrays.asList(1d, 2d));
@@ -1632,17 +1638,21 @@ public class VariantContextUnitTest extends VariantBaseTest {
                 .attribute("Empty", new int[0])
                 .attribute("DefaultIntegerList", new int[5])
                 .attribute("ListWithMissing", new Object[]{1, null, null})
+                .attribute("ListValueIsMissing", new Object[]{"."})
                 .attribute("IntegerList", new int[]{0, 1, 2, 3})
                 .attribute("DoubleList", new double[]{1.8, 1.6, 2.1})
                 .attribute("StringList", new String[]{"1", "2"})
                 .attribute("CaseInsensitiveStringList", new String[]{"nan", "Infinity", "-inf"})
                 .attribute("NotNumeric", new String[]{"A", "B"})
                 .make();
+
         // test an empty value
         Assert.assertTrue(context.getAttributeAsStringList("Empty", "empty").isEmpty());
         // test as string
         Assert.assertEquals(context.getAttributeAsStringList("DefaultIntegerList", "empty"), Arrays.asList("0", "0", "0", "0", "0"));
         Assert.assertEquals(context.getAttributeAsStringList("ListWithMissing", "empty"), Arrays.asList("1", "empty", "empty"));
+        final List<String> missingList = context.getAttributeAsStringList("ListValueIsMissing", "nada");
+        Assert.assertTrue(missingList.size() == 1 &&  missingList.get(0).equals(VCFConstants.MISSING_VALUE_v4));  //using a literal to make sure the references are different
         Assert.assertEquals(context.getAttributeAsStringList("IntegerList", "empty"), Arrays.asList("0", "1", "2", "3"));
         Assert.assertEquals(context.getAttributeAsStringList("DoubleList", "empty"), Arrays.asList("1.8", "1.6", "2.1"));
         Assert.assertEquals(context.getAttributeAsStringList("StringList", "empty"), Arrays.asList("1", "2"));

@@ -274,13 +274,19 @@ public final class CommonInfo implements Serializable {
         return getAttributeAsList(key).stream().map(transformer).collect(Collectors.toList());
     }
 
+    /**
+     *
+     * @param key INFO field annotation to query
+     * @param defaultValue replace null values in the list with this
+     * @return an empty list if {@param key} is not found
+     */
     public List<String> getAttributeAsStringList(String key, String defaultValue) {
         return getAttributeAsList(key, x -> (x == null) ? defaultValue : String.valueOf(x));
     }
 
     public List<Integer> getAttributeAsIntList(String key, Integer defaultValue) {
         return getAttributeAsList(key, x -> {
-            if (x == null || x == VCFConstants.MISSING_VALUE_v4) {
+            if (x == null || x.equals(VCFConstants.MISSING_VALUE_v4)) {
                 return defaultValue;
             } else if (x instanceof Number) {
                 return ((Number) x).intValue();
@@ -292,7 +298,7 @@ public final class CommonInfo implements Serializable {
 
     public List<Double> getAttributeAsDoubleList(String key, Double defaultValue) {
         return getAttributeAsList(key, x -> {
-            if (x == null || x == VCFConstants.MISSING_VALUE_v4) {
+            if (x == null || x.equals(VCFConstants.MISSING_VALUE_v4)) {
                 return defaultValue;
             } else if (x instanceof Number) {
                 return ((Number) x).doubleValue();
@@ -311,8 +317,12 @@ public final class CommonInfo implements Serializable {
 
     public int getAttributeAsInt(String key, int defaultValue) {
         Object x = getAttribute(key);
-        if ( x == null || x == VCFConstants.MISSING_VALUE_v4 ) return defaultValue;
-        if ( x instanceof Integer ) return (Integer)x;
+        if ( x == null || x.equals(VCFConstants.MISSING_VALUE_v4)) {
+            return defaultValue;
+        }
+        if ( x instanceof Integer ) {
+            return (Integer)x;
+        }
         return Integer.parseInt((String)x); // throws an exception if this isn't a string
     }
 
